@@ -39,5 +39,16 @@ network:
 `sudo systemctl start wpa_supplicant`
 `sudo init 6`
 
+## Update the system
+
+`sudo apt update`
+`sudo apt full-upgrade`
+
+## Install gpio
+
+`sudo apt-get install wiringpi`
+`sudo gpio readall`
+
+
 
 
