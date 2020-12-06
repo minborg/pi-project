@@ -47,6 +47,11 @@ network:
 
 ## Controll GPIO
 
+`apt install python-gpiozero`
+
+`pinout`
+
+
 https://raspberry-projects.com/pi/command-line/io-pins-command-line/io-pin-control-from-the-command-line
 
 
