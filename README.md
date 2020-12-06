@@ -44,7 +44,15 @@ network:
 `sudo apt update`
 `sudo apt full-upgrade`
 
-## Install gpio
+
+## Controll GPIO
+
+https://raspberry-projects.com/pi/command-line/io-pins-command-line/io-pin-control-from-the-command-line
+
+
+
+
+## Install gpio (Deprecated)
 
 `sudo apt-get install wiringpi`
 
