@@ -71,4 +71,8 @@ https://raspberry-projects.com/pi/command-line/io-pins-command-line/io-pin-contr
 
 curl -sSL https://pi4j.com/install | sudo bash
 
+or
+
+sudo apt-get install wiringpi
+
 
