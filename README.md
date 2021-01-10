@@ -55,8 +55,6 @@ network:
 https://raspberry-projects.com/pi/command-line/io-pins-command-line/io-pin-control-from-the-command-line
 
 
-
-
 ## Install gpio (Deprecated)
 
 `sudo apt-get install wiringpi`
@@ -69,5 +67,8 @@ https://raspberry-projects.com/pi/command-line/io-pins-command-line/io-pin-contr
 `sudo gpio readall`
 
 
+## Install PI4J
+
+curl -sSL https://pi4j.com/install | sudo bash
 
 
