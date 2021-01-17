@@ -10,6 +10,7 @@ import static java.util.stream.Collectors.toList;
 public final class Patterns {
 
     private static final long JIFFY_MS = 50;
+    private static final int REPEAT = 8;
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -27,13 +28,19 @@ public final class Patterns {
 
         System.out.println("Pins " + allPins);
 
+        System.out.println("Provisioning pins");
+        final long start = System.currentTimeMillis();
+
         final List<GpioPinDigitalOutput> outputPins = allPins.stream()
-                .map(p -> gpio.provisionDigitalOutputPin(p, p.toString(), PinState.HIGH))
+                .map(p -> gpio.provisionDigitalOutputPin(p, p.toString(), PinState.LOW))
                 .collect(toList());
+
+        final long duration = System.currentTimeMillis() - start;
+        System.out.println("Provisioning took " + duration + " ms");
 
         outputPins.forEach(p -> p.setShutdownOptions(true, PinState.LOW));
 
-        System.out.println("GpioPinDigitalOutput " + allPins);
+        System.out.println("GpioPinDigitalOutput " + outputPins);
 
         System.out.println("Flash");
         flash(outputPins);
@@ -51,7 +58,7 @@ public final class Patterns {
     }
 
     private static void flash(final List<GpioPinDigitalOutput> outputPins) throws InterruptedException {
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < REPEAT; i++) {
             outputPins.forEach(GpioPinDigitalOutput::high);
             Thread.sleep(JIFFY_MS);
             outputPins.forEach(GpioPinDigitalOutput::low);
@@ -60,7 +67,7 @@ public final class Patterns {
     }
 
     private static void pingPong(final List<GpioPinDigitalOutput> outputPins) throws InterruptedException {
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < REPEAT; i++) {
             for (int j = 0; j < outputPins.size(); j++) {
                 GpioPinDigitalOutput digitalOutput = outputPins.get(j);
                 digitalOutput.high();
