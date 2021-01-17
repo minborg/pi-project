@@ -79,6 +79,16 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>Patterns</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>minborg.piproject.Patterns</mainClass>
+                            <classpathScope>compile</classpathScope>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>Main</id>
                         <goals>
                             <goal>java</goal>

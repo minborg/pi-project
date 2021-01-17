@@ -11,6 +11,10 @@ import static java.util.stream.Collectors.toList;
 public final class FlashAll {
 
     public static void main(String[] args) throws InterruptedException {
+
+        // Pin-out:
+        // https://pi4j.com/1.2/pins/model-b-plus.html
+
         System.out.println("Started " + FlashAll.class.getSimpleName());
 
         System.out.println("<--Pi4J--> GPIO Control Example ... started.");
