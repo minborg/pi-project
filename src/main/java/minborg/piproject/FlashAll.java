@@ -18,11 +18,16 @@ public final class FlashAll {
         // create gpio controller
         final GpioController gpio = GpioFactory.getInstance();
 
-        final List<Pin> allPins = Stream.of(RaspiPin.allPins((SystemInfo.BoardType) null)).collect(toList());
+        final List<Pin> allPins = Stream.of(RaspiPin.allPins((SystemInfo.BoardType) null))
+                .collect(toList());
+
+        System.out.println("Pins " + allPins);
 
         final List<GpioPinDigitalOutput> outputPins = allPins.stream()
                 .map(p -> gpio.provisionDigitalOutputPin(p, p.toString(), PinState.HIGH))
                 .collect(toList());
+
+        System.out.println("GpioPinDigitalOutput " + allPins);
 
         outputPins.forEach(p -> p.setShutdownOptions(true, PinState.LOW));
 
