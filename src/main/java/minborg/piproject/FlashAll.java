@@ -35,9 +35,19 @@ public final class FlashAll {
 
         outputPins.forEach(GpioPinDigitalOutput::low);
 
-        for (int i = 0; i < 20; i++) {
-            Thread.sleep(1000);
+        System.out.println("Flashing all");
+
+        for (int i = 0; i < 6; i++) {
+            Thread.sleep(500);
             outputPins.forEach(GpioPinDigitalOutput::toggle);
+        }
+
+        for (GpioPinDigitalOutput outputPin : outputPins) {
+            System.out.println("Flashing " + outputPin);
+            for (int i = 0; i < 6; i++) {
+                Thread.sleep(500);
+                outputPins.forEach(GpioPinDigitalOutput::toggle);
+            }
         }
 
         // stop all GPIO activity/threads by shutting down the GPIO controller
