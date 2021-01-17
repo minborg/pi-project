@@ -51,15 +51,15 @@ public final class Patterns {
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < outputPins.size(); j++) {
                 GpioPinDigitalOutput digitalOutput = outputPins.get(j);
-                digitalOutput.low();
-                Thread.sleep(100);
                 digitalOutput.high();
+                Thread.sleep(100);
+                digitalOutput.low();
             }
             for (int j = outputPins.size() - 1; j >= 0; j--) {
                 GpioPinDigitalOutput digitalOutput = outputPins.get(j);
-                digitalOutput.low();
-                Thread.sleep(100);
                 digitalOutput.high();
+                Thread.sleep(100);
+                digitalOutput.low();
             }
         }
     }
