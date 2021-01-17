@@ -131,18 +131,20 @@ public final class Patterns {
         public void run() {
             while (!closed) {
 
-                double actualRatio = 0;
                 for (int i = 0; i < Long.SIZE; i++) {
                     if ((ratioMap & (1L << i)) != 0) {
                         output.high();
                     } else {
                         output.low();
                     }
-                    try {
+
+                    // Spin-wait.
+
+/*                    try {
                         Thread.sleep(1);
                     } catch (InterruptedException e) {
                         return;
-                    }
+                    }*/
                 }
             }
         }
@@ -151,7 +153,7 @@ public final class Patterns {
             this.ratio = ratio;
             long newRatioMap = 0;
             for (int i = 0; i < Long.SIZE; i++) {
-                if (random.nextDouble() > ratio)
+                if (ratio > random.nextDouble())
                     newRatioMap |= 1L << i;
             }
             ratioMap = newRatioMap;
