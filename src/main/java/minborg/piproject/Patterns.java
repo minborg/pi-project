@@ -51,7 +51,7 @@ public final class Patterns {
 
         // Close and reconfigure
         outputPins.forEach(GpioPinDigitalOutput::low);
-        outputPins.forEach(GpioPinDigitalOutput::unexport);
+        outputPins.forEach(gpio::unprovisionPin);
 
         final List<GpioPinPwmOutput> pwmPins = allPins.stream()
                 .map(p -> gpio.provisionPwmOutputPin(p, p.toString(), 0))
