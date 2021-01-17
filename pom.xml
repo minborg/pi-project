@@ -69,6 +69,16 @@
                         </configuration>
                     </execution>
                     <execution>
+                        <id>FlashAll</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>minborg.piproject.FlashAll</mainClass>
+                            <classpathScope>compile</classpathScope>
+                        </configuration>
+                    </execution>
+                    <execution>
                         <id>Main</id>
                         <goals>
                             <goal>java</goal>
