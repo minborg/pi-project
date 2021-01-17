@@ -11,6 +11,7 @@ public final class Patterns {
 
     private static final long JIFFY_MS = 50;
     private static final int REPEAT = 8;
+    private static final int MAX_PWM = 1024;
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -48,6 +49,17 @@ public final class Patterns {
         System.out.println("PingPong");
         pingPong(outputPins);
 
+        // Close and reconfigure
+        outputPins.forEach(GpioPinDigitalOutput::low);
+        //outputPins.forEach(GpioPinDigitalOutput::unexport);
+
+        final List<GpioPinPwmOutput> pwmPins = allPins.stream()
+                .map(p -> gpio.provisionPwmOutputPin(p, p.toString(), 0))
+                .collect(toList());
+
+        System.out.println("PingPongPwm");
+        pingPongPwm(pwmPins);
+
 
         // stop all GPIO activity/threads by shutting down the GPIO controller
         // (this method will forcefully shutdown all GPIO monitoring threads and scheduled tasks)
@@ -83,5 +95,23 @@ public final class Patterns {
         }
     }
 
+    private static void pingPongPwm(final List<GpioPinPwmOutput> outputPins) throws InterruptedException {
+        for (int i = 0; i < REPEAT; i++) {
+            final int pwm = (int) (((double) i) * MAX_PWM / REPEAT);
+            System.out.println("pwm = " + pwm);
+            for (int j = 0; j < outputPins.size(); j++) {
+                GpioPinPwmOutput digitalOutput = outputPins.get(j);
+                digitalOutput.setPwm(pwm);
+                Thread.sleep(JIFFY_MS);
+                digitalOutput.setPwm(0);
+            }
+            for (int j = outputPins.size() - 1; j >= 0; j--) {
+                GpioPinPwmOutput digitalOutput = outputPins.get(j);
+                digitalOutput.setPwm(pwm);
+                Thread.sleep(JIFFY_MS);
+                digitalOutput.setPwm(0);
+            }
+        }
+    }
 
 }
