@@ -4,6 +4,7 @@ import com.pi4j.io.gpio.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import static java.util.stream.Collectors.toList;
 
@@ -115,12 +116,12 @@ public final class Patterns {
 
     private static final class PwmThread extends Thread {
 
-        private static final int CYCLE_LENGTH = 128;
-        private static final double CYCLE_DELTA = 1d / CYCLE_LENGTH;
+        private final Random random = new Random();
 
         private final GpioPinDigitalOutput output;
         private volatile boolean closed;
         private volatile double ratio;
+        private volatile long ratioMap;
 
         public PwmThread(final GpioPinDigitalOutput output) {
             this.output = output;
@@ -129,11 +130,11 @@ public final class Patterns {
         @Override
         public void run() {
             while (!closed) {
+
                 double actualRatio = 0;
-                for (int i = 0; i < CYCLE_LENGTH; i++) {
-                    if (ratio > actualRatio) {
+                for (int i = 0; i < Long.SIZE; i++) {
+                    if ((ratioMap & (1L << i)) != 0) {
                         output.high();
-                        actualRatio += CYCLE_DELTA;
                     } else {
                         output.low();
                     }
@@ -148,6 +149,12 @@ public final class Patterns {
 
         public void ratio(double ratio) {
             this.ratio = ratio;
+            long newRatioMap = 0;
+            for (int i = 0; i < Long.SIZE; i++) {
+                if (random.nextDouble() > ratio)
+                    newRatioMap |= 1L << i;
+            }
+            ratioMap = newRatioMap;
         }
 
         public void close() {
