@@ -4,7 +4,6 @@ import com.pi4j.io.gpio.*;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -50,20 +49,14 @@ public final class Patterns {
         System.out.println("PingPong");
         pingPong(outputPins);
 
-        // Close and reconfigure
-        outputPins.forEach(GpioPinDigitalOutput::low);
-        outputPins.forEach(gpio::unprovisionPin);
+        final PwmThread pwmThread = new PwmThread(outputPins.get(0));
+        pwmThread.start();
 
-        final List<GpioPinPwmOutput> pwmPins = Stream.of(RaspiPin.GPIO_01)
-                .map(p -> gpio.provisionPwmOutputPin(p, p.toString(), 0))
-                .collect(toList());
-/*
-        final List<GpioPinPwmOutput> pwmPins = allPins.stream()
-                .map(p -> gpio.provisionPwmOutputPin(p, p.toString(), 0))
-                .collect(toList());*/
-
-        System.out.println("PingPongPwm");
-        pingPongPwm(pwmPins);
+        for (int i = 0; i < 100; i++) {
+            pwmThread.ratio(i / 100d);
+            Thread.sleep(JIFFY_MS);
+        }
+        pwmThread.close();
 
         // stop all GPIO activity/threads by shutting down the GPIO controller
         // (this method will forcefully shutdown all GPIO monitoring threads and scheduled tasks)
@@ -116,6 +109,49 @@ public final class Patterns {
                 digitalOutput.setPwm(0);
             }
         }
+    }
+
+    private static final class PwmThread extends Thread {
+
+        private static final int CYCLE_LENGTH = 128;
+        private static final double CYCLE_DELTA = 1d / CYCLE_LENGTH;
+
+        private final GpioPinDigitalOutput output;
+        private volatile boolean closed;
+        private volatile double ratio;
+
+        public PwmThread(final GpioPinDigitalOutput output) {
+            this.output = output;
+        }
+
+        @Override
+        public void run() {
+            while (!closed) {
+                double actualRatio = 0;
+                for (int i = 0; i < CYCLE_LENGTH; i++) {
+                    if (ratio > actualRatio) {
+                        output.high();
+                        actualRatio += CYCLE_DELTA;
+                    } else {
+                        output.low();
+                    }
+                    try {
+                        Thread.sleep(1);
+                    } catch (InterruptedException e) {
+                        return;
+                    }
+                }
+            }
+        }
+
+        public void ratio(double ratio) {
+            this.ratio = ratio;
+        }
+
+        public void close() {
+            this.closed = true;
+        }
+
     }
 
 }
