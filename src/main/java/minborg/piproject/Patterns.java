@@ -9,6 +9,8 @@ import static java.util.stream.Collectors.toList;
 
 public final class Patterns {
 
+    private static final long JIFFY_MS = 50;
+
     public static void main(String[] args) throws InterruptedException {
 
         // Pin-out:
@@ -33,10 +35,11 @@ public final class Patterns {
 
         System.out.println("GpioPinDigitalOutput " + allPins);
 
+        System.out.println("Flash");
+        flash(outputPins);
+
         System.out.println("PingPong");
         pingPong(outputPins);
-
-
 
 
         // stop all GPIO activity/threads by shutting down the GPIO controller
@@ -47,18 +50,27 @@ public final class Patterns {
 
     }
 
+    private static void flash(final List<GpioPinDigitalOutput> outputPins) throws InterruptedException {
+        for (int i = 0; i < 8; i++) {
+            outputPins.forEach(GpioPinDigitalOutput::high);
+            Thread.sleep(JIFFY_MS);
+            outputPins.forEach(GpioPinDigitalOutput::low);
+            Thread.sleep(JIFFY_MS);
+        }
+    }
+
     private static void pingPong(final List<GpioPinDigitalOutput> outputPins) throws InterruptedException {
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 8; i++) {
             for (int j = 0; j < outputPins.size(); j++) {
                 GpioPinDigitalOutput digitalOutput = outputPins.get(j);
                 digitalOutput.high();
-                Thread.sleep(100);
+                Thread.sleep(JIFFY_MS);
                 digitalOutput.low();
             }
             for (int j = outputPins.size() - 1; j >= 0; j--) {
                 GpioPinDigitalOutput digitalOutput = outputPins.get(j);
                 digitalOutput.high();
-                Thread.sleep(100);
+                Thread.sleep(JIFFY_MS);
                 digitalOutput.low();
             }
         }
