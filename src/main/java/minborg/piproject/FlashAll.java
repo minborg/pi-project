@@ -46,7 +46,7 @@ public final class FlashAll {
             System.out.println("Flashing " + outputPin);
             for (int i = 0; i < 6; i++) {
                 Thread.sleep(500);
-                outputPins.forEach(GpioPinDigitalOutput::toggle);
+                outputPin.toggle();
             }
         }
 
