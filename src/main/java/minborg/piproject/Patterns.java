@@ -52,9 +52,11 @@ public final class Patterns {
         final PwmThread pwmThread = new PwmThread(outputPins.get(0));
         pwmThread.start();
 
-        for (int i = 0; i < 100; i++) {
-            pwmThread.ratio(i / 100d);
-            Thread.sleep(JIFFY_MS);
+        for (int i = 0; i < 10; i++) {
+            final double ratio = i / 10d;
+            System.out.println("ratio = " + ratio);
+            pwmThread.ratio(ratio);
+            Thread.sleep(1000);
         }
         pwmThread.close();
 
