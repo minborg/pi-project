@@ -4,6 +4,7 @@ import com.pi4j.io.gpio.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -53,13 +54,16 @@ public final class Patterns {
         outputPins.forEach(GpioPinDigitalOutput::low);
         outputPins.forEach(gpio::unprovisionPin);
 
-        final List<GpioPinPwmOutput> pwmPins = allPins.stream()
+        final List<GpioPinPwmOutput> pwmPins = Stream.of(RaspiPin.GPIO_01)
                 .map(p -> gpio.provisionPwmOutputPin(p, p.toString(), 0))
                 .collect(toList());
+/*
+        final List<GpioPinPwmOutput> pwmPins = allPins.stream()
+                .map(p -> gpio.provisionPwmOutputPin(p, p.toString(), 0))
+                .collect(toList());*/
 
         System.out.println("PingPongPwm");
         pingPongPwm(pwmPins);
-
 
         // stop all GPIO activity/threads by shutting down the GPIO controller
         // (this method will forcefully shutdown all GPIO monitoring threads and scheduled tasks)
