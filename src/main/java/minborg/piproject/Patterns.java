@@ -54,7 +54,7 @@ public final class Patterns {
         pwmThread.start();
 
         for (int i = 0; i < 100; i++) {
-            final double ratio = i / 100d;
+            final float ratio = i / 100f;
             pwmThread.ratio(ratio);
             Thread.sleep(100);
         }
@@ -119,7 +119,7 @@ public final class Patterns {
 
         private final GpioPinDigitalOutput output;
         private volatile boolean closed;
-        private volatile double ratio;
+        private volatile float ratio;
         private volatile long ratioMap;
 
         public PwmThread(final GpioPinDigitalOutput output) {
@@ -148,12 +148,17 @@ public final class Patterns {
             }
         }
 
-        public void ratio(double ratio) {
+        public void ratio(float ratio) {
             this.ratio = ratio;
+            float delta = ratio/Long.SIZE;
+            float sum = 0;
             long newRatioMap = 0;
             for (int i = 0; i < Long.SIZE; i++) {
-                if (ratio > random.nextDouble())
+                sum += delta;
+                if (sum >= 1) {
                     newRatioMap |= 1L << i;
+                    sum -= 1;
+                }
             }
             ratioMap = newRatioMap;
         }
