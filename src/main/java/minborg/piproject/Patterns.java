@@ -149,6 +149,7 @@ public final class Patterns {
         }
 
         public void ratio(float ratio) {
+            System.out.println("ratio = " + ratio);
             this.ratio = ratio;
             float delta = ratio/Long.SIZE;
             float sum = 0;
@@ -160,6 +161,7 @@ public final class Patterns {
                     sum -= 1;
                 }
             }
+            System.out.println(Long.toBinaryString(newRatioMap));
             ratioMap = newRatioMap;
         }
 
