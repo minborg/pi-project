@@ -109,16 +109,6 @@
                         </configuration>
                     </execution>
                     <execution>
-                        <id>SoftPwm</id>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>minborg.piproject.SoftPwm</mainClass>
-                            <classpathScope>compile</classpathScope>
-                        </configuration>
-                    </execution>
-                    <execution>
                         <id>Main</id>
                         <goals>
                             <goal>java</goal>
