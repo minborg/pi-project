@@ -37,7 +37,7 @@ public final class Pwm {
         // has been provided, then lookup the pin by address
         Pin pin = CommandArgumentParser.getPin(
                 RaspiPin.class,    // pin provider class to obtain pin instance from
-                RaspiPin.GPIO_12,  // default pin if no pin argument found
+                RaspiPin.GPIO_01,  // default pin if no pin argument found
                 args);             // argument array to search in
 
         GpioPinPwmOutput pwm = gpio.provisionPwmOutputPin(pin);

@@ -148,20 +148,9 @@ public final class Patterns {
         }
 
         public void ratio(float ratio) {
-            System.out.println("ratio = " + ratio);
             this.ratio = ratio;
-            float delta = ratio/Long.SIZE;
-            float sum = 0;
-            long newRatioMap = 0;
-            for (int i = 0; i < Long.SIZE; i++) {
-                sum += delta;
-                if (sum >= 1) {
-                    newRatioMap |= 1L << i;
-                    sum -= 1;
-                }
-            }
-            System.out.println(Long.toBinaryString(newRatioMap));
-            ratioMap = newRatioMap;
+            ratioMap = patternFor(ratio);
+            System.out.println("ratio = " + ratio + " : " + Long.toBinaryString(ratioMap));
         }
 
         public void close() {
@@ -169,5 +158,19 @@ public final class Patterns {
         }
 
     }
+
+    static long patternFor(float ratio) {
+        float sum = 0;
+        long newRatioMap = 0;
+        for (int i = 0; i < Long.SIZE; i++) {
+            sum += ratio;
+            if (sum >= 1) {
+                newRatioMap |= 1L << i;
+                sum -= 1;
+            }
+        }
+        return newRatioMap;
+    }
+
 
 }
