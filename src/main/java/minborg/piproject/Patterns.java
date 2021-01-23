@@ -105,14 +105,12 @@ public final class Patterns {
                 for (int i = 0; i < Long.SIZE; i++) {
                     final float ratio = ((float) i) / Long.SIZE;
                     pwmThread.ratio(ratio);
-                    Thread.sleep(JIFFY_MS / 8);
+                    Thread.sleep(3);
                 }
-            }
-            for (int j = 0; j < REPEAT; j++) {
                 for (int i = Long.SIZE; i >= 0; i--) {
                     final float ratio = ((float) i) / Long.SIZE;
                     pwmThread.ratio(ratio);
-                    Thread.sleep(JIFFY_MS / 8);
+                    Thread.sleep(3);
                 }
             }
         } catch (InterruptedException e) {
