@@ -101,17 +101,15 @@ public final class Patterns {
         final PwmThread pwmThread = new PwmThread(outputPin);
         pwmThread.start();
         try {
-            for (int j = 0; j < REPEAT; j++) {
-                for (int i = 0; i < Long.SIZE; i++) {
-                    final float ratio = ((float) i) / Long.SIZE;
-                    pwmThread.ratio(ratio);
-                    Thread.sleep(5);
-                }
-                for (int i = Long.SIZE; i >= 0; i--) {
-                    final float ratio = ((float) i) / Long.SIZE;
-                    pwmThread.ratio(ratio);
-                    Thread.sleep(5);
-                }
+            for (int i = 0; i < Long.SIZE; i++) {
+                final float ratio = ((float) i) / Long.SIZE;
+                pwmThread.ratio(ratio);
+                Thread.sleep(6);
+            }
+            for (int i = Long.SIZE; i >= 0; i--) {
+                final float ratio = ((float) i) / Long.SIZE;
+                pwmThread.ratio(ratio);
+                Thread.sleep(6);
             }
         } catch (InterruptedException e) {
             e.printStackTrace();
