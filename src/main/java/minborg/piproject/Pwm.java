@@ -18,7 +18,8 @@ public final class Pwm {
     public static void main(String[] args) throws InterruptedException {
 
 
-        // Todo: Remember to run "sudo adduser pi gpio"
+        // https://raspberrypi.stackexchange.com/questions/40105/access-gpio-pins-without-root-no-access-to-dev-mem-try-running-as-root
+
 
 
         // create Pi4J console wrapper/helper

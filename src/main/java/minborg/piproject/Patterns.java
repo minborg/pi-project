@@ -2,9 +2,8 @@ package minborg.piproject;
 
 import com.pi4j.io.gpio.*;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
+import java.util.stream.IntStream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -37,6 +36,9 @@ public final class Patterns {
                 .map(p -> gpio.provisionDigitalOutputPin(p, p.toString(), PinState.LOW))
                 .collect(toList());
 
+        final List<GpioPinDigitalOutput> outputPinsReversed = new ArrayList<>(outputPins);
+        Collections.reverse(outputPins);
+
         final long duration = System.currentTimeMillis() - start;
         System.out.println("Provisioning took " + duration + " ms");
 
@@ -52,6 +54,8 @@ public final class Patterns {
 
         System.out.println("Glow");
         outputPins.forEach(Patterns::glow);
+        outputPinsReversed.forEach(Patterns::glow);
+
 
 /*        final PwmThread pwmThread = new PwmThread(outputPins.get(0));
         pwmThread.start();
