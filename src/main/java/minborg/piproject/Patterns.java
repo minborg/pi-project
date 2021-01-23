@@ -50,13 +50,15 @@ public final class Patterns {
         System.out.println("PingPong");
         pingPong(outputPins);
 
+        System.out.println("Glow");
+        glow(outputPins.get(0));
+
         final PwmThread pwmThread = new PwmThread(outputPins.get(0));
         pwmThread.start();
 
         for (int i = 0; i < Long.SIZE; i++) {
             final float ratio = ((float) i) / Long.SIZE;
             pwmThread.ratio(ratio);
-            System.out.println("ratio = " + ratio);
             Thread.sleep(1000);
         }
         pwmThread.close();
@@ -95,6 +97,31 @@ public final class Patterns {
         }
     }
 
+    private static void glow(GpioPinDigitalOutput outputPin) {
+        final PwmThread pwmThread = new PwmThread(outputPin);
+        pwmThread.start();
+        try {
+            for (int j = 0; j < REPEAT; j++) {
+                for (int i = 0; i < Long.SIZE; i++) {
+                    final float ratio = ((float) i) / Long.SIZE;
+                    pwmThread.ratio(ratio);
+                    Thread.sleep(100);
+                }
+            }
+            for (int j = 0; j < REPEAT; j++) {
+                for (int i = 0; i < Long.SIZE; i++) {
+                    final float ratio = (1f - ((float) i) / Long.SIZE);
+                    pwmThread.ratio(ratio);
+                    Thread.sleep(100);
+                }
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            pwmThread.close();
+        }
+    }
+
     private static void pingPongPwm(final List<GpioPinPwmOutput> outputPins) throws InterruptedException {
         for (int i = 0; i < REPEAT; i++) {
             final int pwm = (int) (((double) i) * MAX_PWM / REPEAT);
@@ -118,7 +145,6 @@ public final class Patterns {
 
         private final GpioPinDigitalOutput output;
         private volatile boolean closed;
-        private volatile float ratio;
         private volatile long ratioMap;
 
         public PwmThread(final GpioPinDigitalOutput output) {
@@ -148,9 +174,8 @@ public final class Patterns {
         }
 
         public void ratio(float ratio) {
-            this.ratio = ratio;
             ratioMap = patternFor(ratio);
-            System.out.println("ratio = " + ratio + " : " + Long.toBinaryString(ratioMap));
+            //System.out.println("ratio = " + ratio + " : " + Long.toBinaryString(ratioMap));
         }
 
         public void close() {
