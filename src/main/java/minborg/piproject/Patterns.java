@@ -37,7 +37,7 @@ public final class Patterns {
                 .collect(toList());
 
         final List<GpioPinDigitalOutput> outputPinsReversed = new ArrayList<>(outputPins);
-        Collections.reverse(outputPins);
+        Collections.reverse(outputPinsReversed);
 
         final long duration = System.currentTimeMillis() - start;
         System.out.println("Provisioning took " + duration + " ms");
