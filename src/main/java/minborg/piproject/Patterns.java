@@ -51,9 +51,9 @@ public final class Patterns {
         pingPong(outputPins);
 
         System.out.println("Glow");
-        glow(outputPins.get(0));
+        outputPins.forEach(Patterns::glow);
 
-        final PwmThread pwmThread = new PwmThread(outputPins.get(0));
+/*        final PwmThread pwmThread = new PwmThread(outputPins.get(0));
         pwmThread.start();
 
         for (int i = 0; i < Long.SIZE; i++) {
@@ -61,7 +61,7 @@ public final class Patterns {
             pwmThread.ratio(ratio);
             Thread.sleep(1000);
         }
-        pwmThread.close();
+        pwmThread.close();*/
 
         // stop all GPIO activity/threads by shutting down the GPIO controller
         // (this method will forcefully shutdown all GPIO monitoring threads and scheduled tasks)
@@ -105,12 +105,12 @@ public final class Patterns {
                 for (int i = 0; i < Long.SIZE; i++) {
                     final float ratio = ((float) i) / Long.SIZE;
                     pwmThread.ratio(ratio);
-                    Thread.sleep(3);
+                    Thread.sleep(5);
                 }
                 for (int i = Long.SIZE; i >= 0; i--) {
                     final float ratio = ((float) i) / Long.SIZE;
                     pwmThread.ratio(ratio);
-                    Thread.sleep(3);
+                    Thread.sleep(5);
                 }
             }
         } catch (InterruptedException e) {
