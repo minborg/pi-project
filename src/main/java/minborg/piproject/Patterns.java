@@ -53,10 +53,11 @@ public final class Patterns {
         final PwmThread pwmThread = new PwmThread(outputPins.get(0));
         pwmThread.start();
 
-        for (int i = 0; i < 100; i++) {
-            final float ratio = i / 100f;
+        for (int i = 0; i < Long.SIZE; i++) {
+            final float ratio = ((float) i) / Long.SIZE;
             pwmThread.ratio(ratio);
-            Thread.sleep(100);
+            System.out.println("ratio = " + ratio);
+            Thread.sleep(1000);
         }
         pwmThread.close();
 
@@ -114,8 +115,6 @@ public final class Patterns {
     }
 
     private static final class PwmThread extends Thread {
-
-        private final Random random = new Random();
 
         private final GpioPinDigitalOutput output;
         private volatile boolean closed;
