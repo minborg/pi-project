@@ -21,7 +21,9 @@ public final class Servo {
 
         final ServoThread thread = new ServoThread(outputPin);
         thread.ratio(0.5f);
-        thread.run();
+        thread.start();
+
+        Thread.sleep(500);
 
         for (int i = 0; i < 100; i++) {
             thread.ratio(((float) i) / 100);
@@ -60,7 +62,7 @@ public final class Servo {
                     // spin wait
                 }
                 output.low();
-                //System.out.println(nextOn + " " + nextOff);
+
                 nextOn += 20 * ONE_MS_IN_NS;
             }
             try {
