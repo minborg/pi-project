@@ -26,10 +26,9 @@ public final class Servo {
 
     }
 
-
     private static final class ServoThread extends Thread {
 
-        private static final long ONE_MS_IN_NS = TimeUnit.MILLISECONDS.toNanos(1);
+        private static final long ONE_MS_IN_NS = 1_000_000;
 
         private final GpioPinDigitalOutput output;
         private volatile boolean closed;
@@ -44,12 +43,13 @@ public final class Servo {
             long nextOn = System.nanoTime();
             while (!closed) {
                 if (System.nanoTime() > nextOn) {
-                    output.high();
                     final long nextOff = nextOn + durationNs;
+                    output.high();
                     if (System.nanoTime() < nextOff) {
                         // spin wait
                     }
                     output.low();
+                    //System.out.println(nextOn + " " + nextOff);
                     nextOn += 20 * ONE_MS_IN_NS;
                 }
             }
@@ -58,6 +58,8 @@ public final class Servo {
         public void ratio(float ratio) {
             durationNs = ONE_MS_IN_NS +
                     (long) (ratio * ONE_MS_IN_NS);
+
+            System.out.println("ratio = " + ratio);
         }
 
         public void close() {
