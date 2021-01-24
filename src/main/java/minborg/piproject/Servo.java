@@ -23,7 +23,7 @@ public final class Servo {
         thread.start();
 
         for (int j = 0; j < 100; j++) {
-            for (int i = -90; i < 180; i = i + 15) {
+            for (int i = -180; i < 360; i = i + 15) {
                 final float ratio = ((float) i) / 180;
                 thread.ratio(ratio);
                 System.out.println("ratio = " + ratio + ", " + i + " degrees");
