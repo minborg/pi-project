@@ -3,6 +3,7 @@ package minborg.piproject;
 import com.pi4j.component.servo.ServoProvider;
 import com.pi4j.component.servo.impl.MaestroServoDriver;
 import com.pi4j.component.servo.impl.MaestroServoProvider;
+import com.pi4j.component.servo.impl.RPIServoBlasterProvider;
 import com.pi4j.io.gpio.Pin;
 
 import java.util.List;
@@ -12,7 +13,8 @@ import java.util.stream.Collectors;
 public final class Servo {
 
     public static void main(String[] args) throws Exception {
-        final ServoProvider servoProvider = new MaestroServoProvider();
+        //final ServoProvider servoProvider = new MaestroServoProvider();
+        final ServoProvider servoProvider = new RPIServoBlasterProvider();
 
         final List<Pin> supportedPins = servoProvider.getDefinedServoPins().stream().sorted().collect(Collectors.toList());
 
