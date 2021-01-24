@@ -42,6 +42,7 @@ public final class Servo {
         private static final long ONE_MS_IN_NS = 1_000_000;
 
         private final GpioPinDigitalOutput output;
+        private final long startNs = System.nanoTime();
         private volatile boolean closed;
         private volatile long durationNs;
 
@@ -53,7 +54,7 @@ public final class Servo {
         public void run() {
             long nextOn = System.nanoTime();
             final long nextOff = nextOn + durationNs;
-            System.out.printf("nextOn=%,d  nextOff=%,d%n", nextOn, nextOff);
+            System.out.printf("nextOn=%,d  nextOff=%,d%n", nextOn - startNs, nextOff - startNs);
             while (!closed) {
                 if (System.nanoTime() < nextOn) {
                     // spin wait
@@ -65,7 +66,7 @@ public final class Servo {
                 output.low();
 
                 nextOn += 20 * ONE_MS_IN_NS;
-                System.out.printf("nextOn=%,d  nextOff=%,d%n", nextOn, nextOff);
+                System.out.printf("nextOn=%,d  nextOff=%,d%n", nextOn - startNs, nextOff - startNs);
 /*                try {
                     Thread.sleep(5);
                 } catch (InterruptedException e) {
