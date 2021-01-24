@@ -22,11 +22,6 @@ public final class Servo {
         final ServoThread2 thread = new ServoThread2(outputPin);
         thread.start();
 
-
-        System.out.println("Zero degrees");
-        thread.degree(0);
-        Thread.sleep(1000);
-
         System.out.println("-120 degrees");
         thread.degree(-120);
         Thread.sleep(1000);
@@ -42,15 +37,19 @@ public final class Servo {
             Thread.sleep(1000);
         }
 
-        System.out.println("1 degree steps each 100 ms");
+        System.out.println("1 degree steps each 20 ms");
         for (int i = -120; i < 270; i++) {
             thread.degree(i);
             System.out.println(i + " degrees.");
-            Thread.sleep(100);
+            Thread.sleep(20);
         }
 
-        outputPin.low();
+        System.out.println("Zero degrees before shut down");
+        thread.degree(0);
+        Thread.sleep(100);
+
         thread.close();
+        outputPin.low();
 
         gpio.shutdown();
 
