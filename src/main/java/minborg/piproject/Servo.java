@@ -2,6 +2,8 @@ package minborg.piproject;
 
 import com.pi4j.io.gpio.*;
 
+import java.util.concurrent.locks.LockSupport;
+
 public final class Servo {
 
     public static void main(String[] args) throws Exception {
@@ -17,11 +19,8 @@ public final class Servo {
             Thread.sleep(100);
         }
 
-        final ServoThread thread = new ServoThread(outputPin);
+        final ServoThread2 thread = new ServoThread2(outputPin);
         thread.start();
-
-        Thread.sleep(500);
-
 
         for (int j = 0; j < 100; j++) {
             for (int i = 0; i < 180; i = i + 15) {
@@ -97,6 +96,8 @@ public final class Servo {
 
     private static final class ServoThread2 extends Thread {
 
+        private static final long ONE_MS_IN_NS = 1_000_000;
+
         private final GpioPinDigitalOutput output;
         private final long startNs = System.nanoTime();
         private volatile boolean closed;
@@ -109,18 +110,15 @@ public final class Servo {
         @Override
         public void run() {
             while (!closed) {
-                try {
-                    Thread.sleep(18);
-                    output.high();
-                    Thread.sleep(2);
-                    output.low();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                LockSupport.parkNanos(20 * ONE_MS_IN_NS - durationNs);
+                output.high();
+                LockSupport.parkNanos(durationNs);
+                output.low();
             }
         }
 
         public void ratio(float ratio) {
+            durationNs = (long) ((1 + ratio) * ONE_MS_IN_NS);
         }
 
         public void close() {
