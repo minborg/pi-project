@@ -3,15 +3,25 @@ package minborg.piproject;
 import com.pi4j.component.servo.ServoProvider;
 import com.pi4j.component.servo.impl.MaestroServoDriver;
 import com.pi4j.component.servo.impl.MaestroServoProvider;
+import com.pi4j.io.gpio.Pin;
+
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 public final class Servo {
 
     public static void main(String[] args) throws Exception {
         final ServoProvider servoProvider = new MaestroServoProvider();
 
-        System.out.println("Supported pins:" + servoProvider.getDefinedServoPins());
+        final List<Pin> supportedPins = servoProvider.getDefinedServoPins().stream().sorted().collect(Collectors.toList());
 
-        final MaestroServoDriver servo0 = (MaestroServoDriver) servoProvider.getServoDriver(servoProvider.getDefinedServoPins().get(0));
+        System.out.println("Supported pins:" + servoProvider.getDefinedServoPins());
+        final Pin pin = supportedPins.stream().findFirst().orElseThrow(() -> new NoSuchElementException("No pin!"));
+
+        System.out.println("pin = " + pin);
+
+        final MaestroServoDriver servo0 = (MaestroServoDriver) servoProvider.getServoDriver(pin);
 
         final long start = System.currentTimeMillis();
 
