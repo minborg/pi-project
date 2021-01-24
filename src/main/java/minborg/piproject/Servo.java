@@ -64,11 +64,12 @@ public final class Servo {
                 output.low();
 
                 nextOn += 20 * ONE_MS_IN_NS;
-            }
-            try {
-                Thread.sleep(5);
-            } catch (InterruptedException e) {
-                // do nothing
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
+                    // do nothing
+                }
+
             }
         }
 
