@@ -53,6 +53,7 @@ public final class Servo {
         public void run() {
             long nextOn = System.nanoTime();
             final long nextOff = nextOn + durationNs;
+            System.out.printf("nextOn=%,d  nextOff=%,d%n", nextOn, nextOff);
             while (!closed) {
                 if (System.nanoTime() < nextOn) {
                     // spin wait
@@ -64,11 +65,12 @@ public final class Servo {
                 output.low();
 
                 nextOn += 20 * ONE_MS_IN_NS;
-                try {
+                System.out.printf("nextOn=%,d  nextOff=%,d%n", nextOn, nextOff);
+/*                try {
                     Thread.sleep(5);
                 } catch (InterruptedException e) {
                     // do nothing
-                }
+                }*/
 
             }
         }
