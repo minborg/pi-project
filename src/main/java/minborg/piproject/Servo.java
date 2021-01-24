@@ -59,7 +59,7 @@ public final class Servo {
             durationNs = ONE_MS_IN_NS +
                     (long) (ratio * ONE_MS_IN_NS);
 
-            System.out.println(String.format("%.2f %d", ratio, durationNs);
+            System.out.println(String.format("%.2f %d", ratio, durationNs));
         }
 
         public void close() {
