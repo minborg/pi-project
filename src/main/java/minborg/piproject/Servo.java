@@ -22,9 +22,14 @@ public final class Servo {
 
         Thread.sleep(500);
 
-        for (int i = 0; i < 100; i++) {
-            thread.ratio(((float) i) / 100);
-            Thread.sleep(100);
+
+        for (int j = 0; j < 100; j++) {
+            for (int i = 0; i < 180; i = i + 15) {
+                final float ratio = ((float) i) / 180;
+                thread.ratio(ratio);
+                System.out.println("ratio = " + ratio + ", " + i + " degrees");
+                Thread.sleep(1000);
+            }
         }
 
         outputPin.low();
@@ -84,7 +89,7 @@ public final class Servo {
 
         void busyWait(long durationNs) {
             final long start = System.nanoTime();
-            while(start + durationNs >= System.nanoTime());
+            while (start + durationNs >= System.nanoTime()) ;
         }
 
 
