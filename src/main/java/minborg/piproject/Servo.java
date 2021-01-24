@@ -50,17 +50,18 @@ public final class Servo {
         @Override
         public void run() {
             long nextOn = System.nanoTime();
+            final long nextOff = nextOn + durationNs;
             while (!closed) {
-                if (System.nanoTime() > nextOn) {
-                    final long nextOff = nextOn + durationNs;
-                    output.high();
-                    if (System.nanoTime() < nextOff) {
-                        // spin wait
-                    }
-                    output.low();
-                    //System.out.println(nextOn + " " + nextOff);
-                    nextOn += 20 * ONE_MS_IN_NS;
+                if (System.nanoTime() < nextOn) {
+                    // spin wait
                 }
+                output.high();
+                if (System.nanoTime() < nextOff) {
+                    // spin wait
+                }
+                output.low();
+                //System.out.println(nextOn + " " + nextOff);
+                nextOn += 20 * ONE_MS_IN_NS;
             }
             try {
                 Thread.sleep(5);
