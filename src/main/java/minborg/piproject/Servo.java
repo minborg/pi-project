@@ -48,25 +48,25 @@ public final class Servo {
 
         public ServoThread(final GpioPinDigitalOutput output) {
             this.output = output;
+            ratio(0.5f);
         }
 
         @Override
         public void run() {
             long nextOn = System.nanoTime();
-            final long nextOff = nextOn + durationNs;
-            System.out.printf("nextOn=%,d  nextOff=%,d%n", nextOn - startNs, nextOff - startNs);
             while (!closed) {
-                if (System.nanoTime() < nextOn) {
+                if (nextOn >= System.nanoTime()) {
                     // spin wait
                 }
                 output.high();
-                if (System.nanoTime() < nextOff) {
+                final long nextOff = System.nanoTime() + durationNs;
+                if (nextOff >= System.nanoTime()) {
                     // spin wait
                 }
                 output.low();
 
                 nextOn += 20 * ONE_MS_IN_NS;
-                System.out.printf("nextOn=%,d  nextOff=%,d%n", nextOn - startNs, nextOff - startNs);
+                //System.out.printf("nextOn=%,d  nextOff=%,d%n", nextOn - startNs, nextOff - startNs);
 /*                try {
                     Thread.sleep(5);
                 } catch (InterruptedException e) {
@@ -77,15 +77,19 @@ public final class Servo {
         }
 
         public void ratio(float ratio) {
-            durationNs = ONE_MS_IN_NS +
-                    (long) (ratio * ONE_MS_IN_NS);
-
-            System.out.println(String.format("%.2f %d", ratio, durationNs));
+            durationNs = (long) ((1 + ratio) * ONE_MS_IN_NS);
+            System.out.printf("%.2f %,d%n", ratio, durationNs);
         }
 
         public void close() {
             this.closed = true;
         }
+
+        void busyWait(long durationNs) {
+            final long start = System.nanoTime();
+            while(start + durationNs >= System.nanoTime());
+        }
+
 
     }
 
