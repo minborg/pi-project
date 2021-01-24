@@ -22,13 +22,31 @@ public final class Servo {
         final ServoThread2 thread = new ServoThread2(outputPin);
         thread.start();
 
-        for (int j = 0; j < 100; j++) {
-            for (int i = -180; i < 360; i = i + 15) {
-                final float ratio = ((float) i) / 180;
-                thread.ratio(ratio);
-                System.out.println("ratio = " + ratio + ", " + i + " degrees");
-                Thread.sleep(1000);
-            }
+
+        System.out.println("Zero degrees");
+        thread.degree(0);
+        Thread.sleep(1000);
+
+        System.out.println("-120 degrees");
+        thread.degree(-120);
+        Thread.sleep(1000);
+
+        System.out.println("270 degrees");
+        thread.degree(270);
+        Thread.sleep(1000);
+
+        System.out.println("15 degree steps each second");
+        for (int i = -120; i < 270; i = i + 15) {
+            thread.degree(i);
+            System.out.println(i + " degrees.");
+            Thread.sleep(1000);
+        }
+
+        System.out.println("1 degree steps each 100 ms");
+        for (int i = -120; i < 270; i++) {
+            thread.degree(i);
+            System.out.println(i + " degrees.");
+            Thread.sleep(100);
         }
 
         outputPin.low();
@@ -115,6 +133,10 @@ public final class Servo {
                 LockSupport.parkNanos(durationNs);
                 output.low();
             }
+        }
+
+        public void degree(int degree) {
+            ratio(((float) degree) / 180);
         }
 
         public void ratio(float ratio) {
