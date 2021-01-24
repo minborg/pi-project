@@ -12,6 +12,13 @@ public final class Servo {
 
         System.out.println("outputPin = " + outputPin);
 
+        for (int i = 0; i < 10; i++) {
+            outputPin.high();
+            Thread.sleep(100);
+            outputPin.low();
+            Thread.sleep(100);
+        }
+
         final ServoThread thread = new ServoThread(outputPin);
 
         for (int i = 0; i < 100; i++) {
