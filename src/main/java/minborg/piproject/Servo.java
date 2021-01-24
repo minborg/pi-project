@@ -1,47 +1,68 @@
 package minborg.piproject;
 
-import com.pi4j.component.servo.ServoProvider;
-import com.pi4j.component.servo.impl.MaestroServoDriver;
-import com.pi4j.component.servo.impl.MaestroServoProvider;
-import com.pi4j.component.servo.impl.RPIServoBlasterProvider;
-import com.pi4j.io.gpio.Pin;
+import com.pi4j.io.gpio.*;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
+import java.util.concurrent.TimeUnit;
 
 public final class Servo {
 
     public static void main(String[] args) throws Exception {
-        //final ServoProvider servoProvider = new MaestroServoProvider();
-        final ServoProvider servoProvider = new RPIServoBlasterProvider();
+        final GpioController gpio = GpioFactory.getInstance();
+        final GpioPinDigitalOutput outputPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_01, RaspiPin.GPIO_01.toString(), PinState.LOW);
 
-        final List<Pin> supportedPins = servoProvider.getDefinedServoPins().stream().sorted().collect(Collectors.toList());
+        System.out.println("outputPin = " + outputPin);
 
-        System.out.println("Supported pins:" + servoProvider.getDefinedServoPins());
-        final Pin pin = supportedPins.stream().findFirst().orElseThrow(() -> new NoSuchElementException("No pin!"));
+        final ServoThread thread = new ServoThread(outputPin);
 
-        System.out.println("pin = " + pin);
-
-        final MaestroServoDriver servo0 = (MaestroServoDriver) servoProvider.getServoDriver(pin);
-
-        final long start = System.currentTimeMillis();
-
-        final int min = servo0.getMinValue();
-        System.out.println("min = " + min);
-        final int max = servo0.getMaxValue();
-        System.out.println("max = " + max);
-        servo0.setAcceleration(30);
-
-        while (System.currentTimeMillis() - start < 120000) { // 2 minutes
-            servo0.setServoPulseWidth(min);
-            System.out.println("min");
-            Thread.sleep(1500);
-            System.out.println("max");
-            servo0.setServoPulseWidth(max);
-            Thread.sleep(1500);
+        for (int i = 0; i < 100; i++) {
+            thread.ratio(((float) i) / 100);
+            Thread.sleep(100);
         }
-        System.out.println("Exiting MaestroServoExample");
+
+        outputPin.low();
+        thread.close();
+
+        gpio.shutdown();
+
+    }
+
+
+    private static final class ServoThread extends Thread {
+
+        private static final long ONE_MS_IN_NS = TimeUnit.MILLISECONDS.toNanos(1);
+
+        private final GpioPinDigitalOutput output;
+        private volatile boolean closed;
+        private volatile long durationNs;
+
+        public ServoThread(final GpioPinDigitalOutput output) {
+            this.output = output;
+        }
+
+        @Override
+        public void run() {
+            long nextOn = System.nanoTime();
+            while (!closed) {
+                if (System.nanoTime() > nextOn) {
+                    output.high();
+                    final long nextOff = nextOn + durationNs;
+                    if (System.nanoTime() < nextOff) {
+                        // spin wait
+                    }
+                    output.low();
+                    nextOn += 20 * ONE_MS_IN_NS;
+                }
+            }
+        }
+
+        public void ratio(float ratio) {
+            durationNs = ONE_MS_IN_NS +
+                    (long) (ratio * ONE_MS_IN_NS);
+        }
+
+        public void close() {
+            this.closed = true;
+        }
 
     }
 
