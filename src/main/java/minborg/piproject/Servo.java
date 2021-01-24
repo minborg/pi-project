@@ -2,8 +2,6 @@ package minborg.piproject;
 
 import com.pi4j.io.gpio.*;
 
-import java.util.concurrent.TimeUnit;
-
 public final class Servo {
 
     public static void main(String[] args) throws Exception {
@@ -19,8 +17,7 @@ public final class Servo {
             Thread.sleep(100);
         }
 
-        final ServoThread2 thread = new ServoThread2(outputPin);
-        thread.ratio(0.5f);
+        final ServoThread thread = new ServoThread(outputPin);
         thread.start();
 
         Thread.sleep(500);
