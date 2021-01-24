@@ -7,23 +7,25 @@ import com.pi4j.component.servo.impl.MaestroServoProvider;
 public final class Servo {
 
     public static void main(String[] args) throws Exception {
-        ServoProvider servoProvider = new MaestroServoProvider();
+        final ServoProvider servoProvider = new MaestroServoProvider();
 
         System.out.println("Supported pins:" + servoProvider.getDefinedServoPins());
 
-        MaestroServoDriver servo0 = (MaestroServoDriver) servoProvider.getServoDriver(servoProvider.getDefinedServoPins().get(0));
+        final MaestroServoDriver servo0 = (MaestroServoDriver) servoProvider.getServoDriver(servoProvider.getDefinedServoPins().get(0));
 
-        System.out.println("servo0 = " + servo0);
+        final long start = System.currentTimeMillis();
 
-        long start = System.currentTimeMillis();
-
-        int min = servo0.getMinValue();
-        int max = servo0.getMaxValue();
+        final int min = servo0.getMinValue();
+        System.out.println("min = " + min);
+        final int max = servo0.getMaxValue();
+        System.out.println("max = " + max);
         servo0.setAcceleration(30);
 
         while (System.currentTimeMillis() - start < 120000) { // 2 minutes
             servo0.setServoPulseWidth(min);
+            System.out.println("min");
             Thread.sleep(1500);
+            System.out.println("max");
             servo0.setServoPulseWidth(max);
             Thread.sleep(1500);
         }
