@@ -19,7 +19,7 @@ public final class Servo {
             Thread.sleep(100);
         }
 
-        final ServoThread thread = new ServoThread(outputPin);
+        final ServoThread2 thread = new ServoThread2(outputPin);
         thread.ratio(0.5f);
         thread.start();
 
@@ -81,6 +81,40 @@ public final class Servo {
                     (long) (ratio * ONE_MS_IN_NS);
 
             System.out.println(String.format("%.2f %d", ratio, durationNs));
+        }
+
+        public void close() {
+            this.closed = true;
+        }
+
+    }
+
+    private static final class ServoThread2 extends Thread {
+
+        private final GpioPinDigitalOutput output;
+        private final long startNs = System.nanoTime();
+        private volatile boolean closed;
+        private volatile long durationNs;
+
+        public ServoThread2(final GpioPinDigitalOutput output) {
+            this.output = output;
+        }
+
+        @Override
+        public void run() {
+            while (!closed) {
+                try {
+                    Thread.sleep(18);
+                    output.high();
+                    Thread.sleep(2);
+                    output.low();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        public void ratio(float ratio) {
         }
 
         public void close() {
