@@ -62,6 +62,11 @@ public final class Servo {
                     nextOn += 20 * ONE_MS_IN_NS;
                 }
             }
+            try {
+                Thread.sleep(5);
+            } catch (InterruptedException e) {
+                // do nothing
+            }
         }
 
         public void ratio(float ratio) {
