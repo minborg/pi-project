@@ -141,7 +141,8 @@ public final class Servo {
         @Override
         public void run() {
             while (!closed) {
-                if (cnt.getAndDecrement()>0) {
+                if (cnt.get() > 0) {
+                    cnt.decrementAndGet();
                     LockSupport.parkNanos(20 * ONE_MS_IN_NS - durationNs);
                     output.high();
                     LockSupport.parkNanos(durationNs);
