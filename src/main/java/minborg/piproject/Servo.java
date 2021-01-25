@@ -19,7 +19,7 @@ public final class Servo {
             Thread.sleep(100);
         }
 
-        final ServoThread2 thread = new ServoThread2(outputPin);
+        final ServoThread thread = new ServoThread1(outputPin);
         thread.start();
 
         System.out.println("-120 degrees");
@@ -55,7 +55,19 @@ public final class Servo {
 
     }
 
-    private static final class ServoThread extends Thread {
+    public interface ServoThread {
+
+        void degree(int degree);
+
+        void ratio(float ratio);
+
+        void close();
+
+        void start();
+
+    }
+
+    private static final class ServoThread1 extends Thread implements ServoThread {
 
         private static final long ONE_MS_IN_NS = 1_000_000;
 
@@ -64,7 +76,7 @@ public final class Servo {
         private volatile boolean closed;
         private volatile long durationNs;
 
-        public ServoThread(final GpioPinDigitalOutput output) {
+        public ServoThread1(final GpioPinDigitalOutput output) {
             this.output = output;
             ratio(0.5f);
         }
@@ -73,12 +85,12 @@ public final class Servo {
         public void run() {
             long nextOn = System.nanoTime();
             while (!closed) {
-                if (nextOn >= System.nanoTime()) {
+                if (nextOn < System.nanoTime()) {
                     // spin wait
                 }
                 output.high();
                 final long nextOff = System.nanoTime() + durationNs;
-                if (nextOff >= System.nanoTime()) {
+                if (nextOff < System.nanoTime()) {
                     // spin wait
                 }
                 output.low();
@@ -94,11 +106,18 @@ public final class Servo {
             }
         }
 
+        @Override
+        public void degree(int degree) {
+            ratio(((float) degree) / 180);
+        }
+
+        @Override
         public void ratio(float ratio) {
             durationNs = (long) ((1 + ratio) * ONE_MS_IN_NS);
             System.out.printf("%.2f %,d%n", ratio, durationNs);
         }
 
+        @Override
         public void close() {
             this.closed = true;
         }
@@ -111,7 +130,7 @@ public final class Servo {
 
     }
 
-    private static final class ServoThread2 extends Thread {
+    private static final class ServoThread2 extends Thread implements ServoThread {
 
         private static final long ONE_MS_IN_NS = 1_000_000;
 
@@ -134,14 +153,17 @@ public final class Servo {
             }
         }
 
+        @Override
         public void degree(int degree) {
             ratio(((float) degree) / 180);
         }
 
+        @Override
         public void ratio(float ratio) {
             durationNs = (long) ((1 + ratio) * ONE_MS_IN_NS);
         }
 
+        @Override
         public void close() {
             this.closed = true;
         }
