@@ -2,6 +2,7 @@ package minborg.piproject;
 
 import com.pi4j.io.gpio.*;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.LockSupport;
 
 public final class Servo {
@@ -131,7 +132,7 @@ public final class Servo {
         private final long startNs = System.nanoTime();
         private volatile boolean closed;
         private volatile long durationNs;
-        private volatile boolean changed;
+        private final AtomicInteger cnt = new AtomicInteger();
 
         public ServoThread2(final GpioPinDigitalOutput output) {
             this.output = output;
@@ -140,8 +141,7 @@ public final class Servo {
         @Override
         public void run() {
             while (!closed) {
-                if (changed) {
-                    changed = false;
+                if (cnt.getAndDecrement()>0) {
                     LockSupport.parkNanos(20 * ONE_MS_IN_NS - durationNs);
                     output.high();
                     LockSupport.parkNanos(durationNs);
@@ -158,7 +158,7 @@ public final class Servo {
         @Override
         public void ratio(float ratio) {
             durationNs = (long) ((1 + ratio) * ONE_MS_IN_NS);
-            changed = true;
+            cnt.addAndGet(10);
         }
 
         @Override
