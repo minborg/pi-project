@@ -19,7 +19,7 @@ public final class Servo {
             Thread.sleep(100);
         }
 
-        final ServoThread thread = new ServoThread1(outputPin);
+        final ServoThread thread = new ServoThread2(outputPin);
         thread.start();
 
         System.out.println("-120 degrees");
@@ -96,13 +96,6 @@ public final class Servo {
                 output.low();
 
                 nextOn += 20 * ONE_MS_IN_NS;
-                //System.out.printf("nextOn=%,d  nextOff=%,d%n", nextOn - startNs, nextOff - startNs);
-/*                try {
-                    Thread.sleep(5);
-                } catch (InterruptedException e) {
-                    // do nothing
-                }*/
-
             }
         }
 
@@ -138,6 +131,7 @@ public final class Servo {
         private final long startNs = System.nanoTime();
         private volatile boolean closed;
         private volatile long durationNs;
+        private volatile boolean changed;
 
         public ServoThread2(final GpioPinDigitalOutput output) {
             this.output = output;
@@ -146,10 +140,13 @@ public final class Servo {
         @Override
         public void run() {
             while (!closed) {
-                LockSupport.parkNanos(20 * ONE_MS_IN_NS - durationNs);
-                output.high();
-                LockSupport.parkNanos(durationNs);
-                output.low();
+                if (changed) {
+                    changed = false;
+                    LockSupport.parkNanos(20 * ONE_MS_IN_NS - durationNs);
+                    output.high();
+                    LockSupport.parkNanos(durationNs);
+                    output.low();
+                }
             }
         }
 
@@ -161,6 +158,7 @@ public final class Servo {
         @Override
         public void ratio(float ratio) {
             durationNs = (long) ((1 + ratio) * ONE_MS_IN_NS);
+            changed = true;
         }
 
         @Override
